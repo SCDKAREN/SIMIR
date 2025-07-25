@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head><title>Reporte Mensual</title></head>
+<body>
+  <h2>Generar Reporte Mensual</h2>
+  <form method="post">
+    <button type="submit">📄 Generar PDF</button>
+  </form>
+  <p style="color:green;">{{ mensaje }}</p>
+  {% if mensaje == "PDF generado correctamente." %}
+    <p><a href="{{ url_for('descargar_pdf') }}">Descargar PDF</a></p>
+  {% endif %}
+  <p><a href="{{ url_for('home') }}">Volver al inicio</a></p>
+</body>
+</html>

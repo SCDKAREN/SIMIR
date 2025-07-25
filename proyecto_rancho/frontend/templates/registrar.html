@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Registrar Consumo</title></head>
+<body>
+  <h2>Registrar Consumo</h2>
+  <form method="post" action="{% url 'registro_app:crear' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+  <p style="color:green;">{{ mensaje }}</p>
+  <p><a href="{% url 'inicio' %}">Volver al inicio</a></p>
+</body>
+</html>
