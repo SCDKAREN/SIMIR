@@ -1,7 +1,10 @@
 # Carpetas de entornos virtuales
 /env
 /venv
+/.env
 
-**/_pycache_
+# Archivos de configuración de entornos virtuales
+__pycache__/
+*.pyc
 
 db.sqlite3
