@@ -4,8 +4,9 @@
 <body>
   <h2>Bienvenido {{ current_user.id }}</h2>
   <p><a href="{% url 'registro_app:registro'%}">Registrar Consumo</a></p>
-  <p><a href="">Generar Reporte Mensual</a></p>
-    <p><a href="{% url 'usuario_app:crear'%}">Crear Usuario</a></p>
+  <p><a href="{% url 'registro_app:reporte_mensual' %}">Generar Reporte Mensual</a></p>
+  <p><a href="{% url 'usuario_app:crear_formulario'%}">Crear Usuario</a></p>
+  <p><a href="{% url 'login' %}">LOGIN TEMPORAL</a></p>
   <p><a href="">Cerrar Sesión</a></p>
 </body>
 </html>
