@@ -1,2 +1,60 @@
-<h1>AQUI PLANIFICAREMOS LA GESTION DE REPORTES MENSUALES</h1>
-<a href="{% url 'inicio' %}">Volver</a>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Tabla de Registro</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h2>Registro de Comidas - Casino</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha y Hora</th>
+        <th>Apellido</th>
+        <th>Nombre</th>
+        <th>Documento</th>
+        <th>Casino</th>
+        <th>Comida</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>02/09/2025 12:30</td>
+        <td>Pérez</td>
+        <td>Juan</td>
+        <td>12345678</td>
+        <td>Oficiales</td>
+        <td>Almuerzo</td>
+      </tr>
+      <tr>
+        <td>02/09/2025 20:00</td>
+        <td>Gómez</td>
+        <td>Ana</td>
+        <td>23456789</td>
+        <td>Suboficiales</td>
+        <td>Cena</td>
+      </tr>
+    </tbody>
+  </table>
+  <a href="{% url 'inicio' %}">Volver</a>
+</body>
+</html>
+
