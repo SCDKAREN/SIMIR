@@ -1,30 +1,14 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Tabla de Registro</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-family: Arial, sans-serif;
-    }
-    th, td {
-      border: 1px solid #444;
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-  </style>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registro de comidas{% endblock %}
+
+{% block styles %}
+  <link rel="stylesheet" href="//cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css">
+{% endblock %}
+{% block content %}
   <h2>Registro de Comidas - Casino</h2>
-  <table>
+  <table id="registroTable">
     <thead>
       <tr>
         <th>Fecha y Hora</th>
@@ -36,25 +20,12 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>02/09/2025 12:30</td>
-        <td>Pérez</td>
-        <td>Juan</td>
-        <td>12345678</td>
-        <td>Oficiales</td>
-        <td>Almuerzo</td>
-      </tr>
-      <tr>
-        <td>02/09/2025 20:00</td>
-        <td>Gómez</td>
-        <td>Ana</td>
-        <td>23456789</td>
-        <td>Suboficiales</td>
-        <td>Cena</td>
-      </tr>
     </tbody>
   </table>
   <a href="{% url 'inicio' %}">Volver</a>
-</body>
-</html>
-
+{% endblock %}
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
+    <script src="{% static 'js/registros-datatable.js' %}"></script>
+{% endblock %}
