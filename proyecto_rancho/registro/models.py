@@ -20,5 +20,16 @@ class Registro(models.Model):
     confirmado = models.BooleanField(default=False)
     comida = models.ForeignKey(Comida, on_delete=models.CASCADE,  related_name='registros',null = True)
     
+    def to_json(self):
+        return {
+            "id": self.id,
+            "fecha_hora": self.fecha_hora.isoformat(),
+            "apellido": self.apellido,
+            "nombre": self.nombre,
+            "documento": self.documento,
+            "casino": self.casino.nombre if self.casino else None,
+            "comida": self.comida.nombre if self.comida else None,
+        }
+    
     def __str__(self):
         return f"{self.apellido}, {self.nombre} - {self.documento}"
