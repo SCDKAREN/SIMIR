@@ -1,1 +1,68 @@
-let table = new DataTable('#registroTable');
+
+let idRowClicked;
+$(document).ready(function () {
+    
+    const url = $('#registroTable').data('url');
+    dataTable = $('#registroTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: url,  // Ruta a tu vista de servidor
+            dataSrc: 'data'       // nombre del campo que contiene la lista de alarmas
+        },
+        columns: [
+             
+                
+            { data: 'fecha_hora' },
+            { data: 'apellido' },
+            { data: 'nombre' },            
+            {
+                data: 'documento',
+                render: function (data, type, row) {
+                    return data ? data : 'Sin DNI';
+                }
+            },
+            { data: 'casino' },
+            {
+              data: 'comida',
+                
+            },
+     
+            
+        ],
+        language: {
+            decimal:"",
+            emptyTable:"No hay registros que mostrar en la tabla",
+            info: "Mostrando START a END de TOTAL registros",
+            infoEmpty:"Mostrando 0 de 0 de 0 registros",
+            loadingRecords: "Cargando...",
+            zeroRecords:    "No se encontraron registros",
+            lengthMenu:     "Mostrar MENU registros",
+            // También puedes ajustar otras cadenas de texto aquí, si lo necesitas.
+            search: "",
+            paginate: {
+                first: "Primero",
+                last: "Último",
+                next: "Siguiente",
+                previous: "Anterior"
+            },
+            infoFiltered:"(Filtrado de MAX total entradas)",
+            infoPostFix:"",
+            thousands:",",
+            },
+        deferRender: true,
+        lengthChange: false,
+        
+        buttons: ['copy', 'excel', 'pdf'],
+    });
+
+    
+    $(".dataTables_length select").addClass('form-select');
+    $('.dataTables_filter label').addClass('label-form');
+    $('.dataTables_filter input').addClass('form-control rounded bg-light border-light');
+    $('.dataTables_filter input').attr('placeholder', 'Buscar ...');
+
+
+
+
+});

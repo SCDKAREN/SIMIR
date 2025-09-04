@@ -6,4 +6,5 @@ urlpatterns = [
     path('registrar/', registrar, name='registro'),
     path('crear/', crear_registro, name='crear'),
     path('reporte-mensual/', reporte_mensual_view, name='reporte_mensual'),
+    path('datatable/',registro_datatable,name='datatable')
 ]
