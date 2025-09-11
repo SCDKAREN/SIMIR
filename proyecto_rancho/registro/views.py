@@ -1,4 +1,6 @@
 import datetime
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from .forms import RegistroForm
 from .models import Comida
@@ -8,28 +10,54 @@ from .models import Registro
 # Create your views here.
 
 def login_view(request):
-    return render(request, "login.html")
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
 
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)  # Loguea al usuario en Django
+            return redirect("registro_app:registro")  # Cambiar a la vista deseada
+        else:
+            messages.error(request, "Usuario o contraseña incorrectos")
+
+    return render(request, "login.html")
 def registrar(request):
     usuario = request.user
-    comida = Comida.objects.get(id=1)  # Asumiendo que tienes un objeto Comida con id=1
+    comidas = Comida.objects.all()  # Asumiendo que tienes un objeto Comida con id=1
     # if not usuario.is_authenticated:
     #     return redirect('login')
     form = RegistroForm(request.POST)
-    return render(request,"registrar.html",{'form': form, 'usuario': usuario, 'comida': comida})
+    return render(request,"registrar.html",{'form': form, 'usuario': usuario, 'comidas': comidas})
 
 def crear_registro(request):
     if request.method == 'POST':
         try:
             form = RegistroForm(request.POST)
             if form.is_valid():
-                form.save()
-                return redirect('registro:registro_exitoso')  # Asegúrate de tener esta vista o URL
+                # Extraemos las comidas seleccionadas
+                comidas = form.cleaned_data.pop('comida')  # saco comidas del form
+                # Creamos un objeto base SIN guardar aún
+                registro_base = form.save(commit=False)
+                
+                for comida in comidas:
+                    # Clonar el objeto base
+                    registro = Registro(
+                        **{campo.name: getattr(registro_base, campo.name)
+                           for campo in Registro._meta.fields
+                           if campo.name not in ('id', 'comida')}
+                    )
+                    # asignamos la comida
+                    registro.comida = comida
+                    registro.save()
+
+                return redirect('registro_app:registro_exitoso')
+            
             else:
                 print("Formulario no válido:", form.errors)
         except Exception as e:
             print(f"Error al guardar el registro: {e}")
-            return redirect('registro:crear_registro')
+            return redirect('registro_app:crear_registro')
     else:
         form = RegistroForm()
     
