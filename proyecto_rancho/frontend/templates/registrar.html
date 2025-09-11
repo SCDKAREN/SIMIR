@@ -21,11 +21,15 @@
             </div>
             <div>
                 <label for="casino">Casino</label>
-                <input class="form-control" type="text" id="casino" name="casino" required readonly value="{{ usuario.casino.id }}">
+                <select class="form-control disabled" name="casino" id="casino">
+                    <option value="{{ usuario.casino.id }}">{{ usuario.casino }}</option>
+                </select>
             </div>
             <div>
-                <label for="comida">Comida</label>
-                <input class="form-control" type="text" id="comida" name="comida" required readonly value="{{ comida.id }}">
+                {% for comida in comidas %}
+                <label for="comida">{{ comida }}</label>
+                <input class="" type="checkbox"  name="comida" required readonly value="{{ comida.id }}">
+                {% endfor %}
             </div>
         </div>
         <button class="btn btn-success" type="submit">Confirmar</button>

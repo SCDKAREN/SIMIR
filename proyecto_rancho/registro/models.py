@@ -15,7 +15,7 @@ class Registro(models.Model):
     fecha_hora = models.DateTimeField(auto_now_add=True)  # Fecha y hora del registro (se guarda automáticamente)
     apellido = models.CharField(max_length=100)
     nombre = models.CharField(max_length=100)
-    documento = models.CharField(max_length=50, unique=True)
+    documento = models.CharField(max_length=50)
     casino = models.ForeignKey(Casino, on_delete=models.CASCADE,  related_name='registros')
     confirmado = models.BooleanField(default=False)
     comida = models.ForeignKey(Comida, on_delete=models.CASCADE,  related_name='registros',null = True)

@@ -3,7 +3,7 @@
 <head><title>Login</title></head>
 <body>
   <h2>Login Casino Militar</h2>
-  <form method="post">
+  <form method="post"action="{% url 'registro_app:login' %}">
     {% csrf_token %}
     {% if messages %}
       {% for message in messages %}
