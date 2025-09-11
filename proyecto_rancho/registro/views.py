@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render, redirect
 from .forms import RegistroForm
 from .models import Comida
@@ -19,10 +20,16 @@ def registrar(request):
 
 def crear_registro(request):
     if request.method == 'POST':
-        form = RegistroForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('registro:registro_exitoso')  # Asegúrate de tener esta vista o URL
+        try:
+            form = RegistroForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('registro:registro_exitoso')  # Asegúrate de tener esta vista o URL
+            else:
+                print("Formulario no válido:", form.errors)
+        except Exception as e:
+            print(f"Error al guardar el registro: {e}")
+            return redirect('registro:crear_registro')
     else:
         form = RegistroForm()
     

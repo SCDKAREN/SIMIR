@@ -13,7 +13,14 @@ $(document).ready(function () {
         columns: [
              
                 
-            { data: 'fecha_hora' },
+            { 
+                data: 'fecha_hora',
+                render: function (data, type, row) {
+                    const date = new Date(data);
+                    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+                    return date.toLocaleDateString('es-ES', options).replace(',', '');
+                }
+            },
             { data: 'apellido' },
             { data: 'nombre' },            
             {
@@ -23,12 +30,7 @@ $(document).ready(function () {
                 }
             },
             { data: 'casino' },
-            {
-              data: 'comida',
-                
-            },
-     
-            
+            { data: 'comida' },
         ],
         language: {
             decimal:"",
@@ -38,7 +40,6 @@ $(document).ready(function () {
             loadingRecords: "Cargando...",
             zeroRecords:    "No se encontraron registros",
             lengthMenu:     "Mostrar MENU registros",
-            // También puedes ajustar otras cadenas de texto aquí, si lo necesitas.
             search: "",
             paginate: {
                 first: "Primero",

@@ -9,23 +9,23 @@
         <div class="mb-3">
             <div>
                 <label for="first_name">Nombre</label>
-                <input class="form-control" type="text" id="first_name" name="first_name" required readonly value="{{ usuario.first_name }}">
+                <input class="form-control" type="text" id="first_name" name="nombre" required readonly value="{{ usuario.first_name }}">
             </div>
             <div>
                 <label for="last_name">Apellido</label>
-                <input class="form-control" type="text" id="last_name" name="last_name" required readonly value="{{ usuario.last_name }}">
+                <input class="form-control" type="text" id="last_name" name="apellido" required readonly value="{{ usuario.last_name }}">
             </div>
             <div>
                 <label for="dni">Documento</label>
-                <input class="form-control" type="text" id="dni" name="dni" required readonly value="{{ usuario.dni }}">
+                <input class="form-control" type="text" id="dni" name="documento" required readonly value="{{ usuario.dni }}">
             </div>
             <div>
                 <label for="casino">Casino</label>
-                <input class="form-control" type="text" id="casino" name="casino" required readonly value="{{ usuario.casino }}">
+                <input class="form-control" type="text" id="casino" name="casino" required readonly value="{{ usuario.casino.id }}">
             </div>
             <div>
                 <label for="comida">Comida</label>
-                <input class="form-control" type="text" id="comida" name="comida" required readonly value="{{ comida }}">
+                <input class="form-control" type="text" id="comida" name="comida" required readonly value="{{ comida.id }}">
             </div>
         </div>
         <button class="btn btn-success" type="submit">Confirmar</button>
