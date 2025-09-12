@@ -6,6 +6,21 @@ $(document).ready(function () {
     dataTable = $('#registroTable').DataTable({
         processing: true,
         serverSide: true,
+        dom: 'Bfrtip',  // Esto indica dónde van los botones
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: '📊 Descargar Excel',
+                className: 'btn btn-success'
+            },
+            {
+                extend: 'pdfHtml5',
+                text: '📄 Descargar PDF',
+                className: 'btn btn-danger'
+            }
+        ],
+
+    
         ajax: {
             url: url,  // Ruta a tu vista de servidor
             dataSrc: 'data'       // nombre del campo que contiene la lista de alarmas
@@ -30,7 +45,11 @@ $(document).ready(function () {
                 }
             },
             { data: 'casino' },
-            { data: 'comida' },
+            { data: 'comida',
+                render:function(data,type,row){
+                    return `<span class="badge bg-success">${data}</span> `
+                }
+             },
         ],
         language: {
             decimal:"",
