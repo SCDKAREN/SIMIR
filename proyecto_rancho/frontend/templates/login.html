@@ -1,21 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head><title>Login</title></head>
-<body>
-  <h2>Login Casino Militar</h2>
-  <form method="post"action="{% url 'registro_app:login' %}">
-    {% csrf_token %}
-    {% if messages %}
-      {% for message in messages %}
-        <div>{{ message }}</div>
-      {% endfor %}
-    {% endif %}
-    <label>Usuario:</label><br>
-    <input name="username" required><br>
-    <label>Contraseña:</label><br>
-    <input name="password" type="password" required><br><br>
-    <button type="submit">Ingresar</button>
-  </form>
-  
-</body>
-</html>
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+  <div class="d-flex flex-column align-items-center">
+    <h2 h2>Iniciar sesión</h2>
+    <form method="post"action="{% url 'registro_app:login' %}">
+      {% csrf_token %}
+      {% if messages %}
+        {% for message in messages %}
+          <div>{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      <label>Usuario:</label><br>
+      <input name="username" required><br>
+      <label>Contraseña:</label><br>
+      <input name="password" type="password" required><br><br>
+      <div class="d-flex gap-2 justify-content-center">
+        <button class="btn btn-primary" type="submit">Ingresar</button>
+        <a href="{% url 'usuario_app:crear_formulario' %}" class="btn btn-success">Registrarse</a>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

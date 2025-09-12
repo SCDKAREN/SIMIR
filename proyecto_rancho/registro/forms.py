@@ -1,5 +1,5 @@
 from django import forms
-from .models import Registro
+from .models import *
 
 class RegistroForm(forms.ModelForm):
     class Meta:

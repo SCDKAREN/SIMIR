@@ -1,5 +1,5 @@
 import datetime
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .forms import RegistroForm
@@ -15,13 +15,28 @@ def login_view(request):
         password = request.POST.get("password")
 
         user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)  # Loguea al usuario en Django
-            return redirect("registro_app:registro")  # Cambiar a la vista deseada
-        else:
-            messages.error(request, "Usuario o contraseña incorrectos")
 
-    return render(request, "login.html")
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+
+                # Redirección diferenciada
+                if user.is_staff:
+                    return redirect("registro_app:reporte_mensual")  # o donde quieras para staff
+                else:
+                    return redirect("registro_app:registro")  # usuarios comunes
+            else:
+                messages.error(request, "Tu cuenta está desactivada. Contacta al administrador.")
+        else:
+            messages.error(request, "Usuario o contraseña incorrectos.")
+
+    return render(request, "login.html")  # tu template de login
+
+def logout_view(request):
+    logout(request)  # elimina la sesión del usuario
+    messages.success(request, "Has cerrado sesión correctamente.")
+    return redirect("login")  # cambia "login" por el nombre de tu url de login
+
 def registrar(request):
     usuario = request.user
     comidas = Comida.objects.all()  # Asumiendo que tienes un objeto Comida con id=1
@@ -32,36 +47,36 @@ def registrar(request):
 
 def crear_registro(request):
     if request.method == 'POST':
-        try:
-            form = RegistroForm(request.POST)
-            if form.is_valid():
-                # Extraemos las comidas seleccionadas
-                comidas = form.cleaned_data.pop('comida')  # saco comidas del form
-                # Creamos un objeto base SIN guardar aún
-                registro_base = form.save(commit=False)
-                
-                for comida in comidas:
-                    # Clonar el objeto base
-                    registro = Registro(
-                        **{campo.name: getattr(registro_base, campo.name)
-                           for campo in Registro._meta.fields
-                           if campo.name not in ('id', 'comida')}
-                    )
-                    # asignamos la comida
-                    registro.comida = comida
-                    registro.save()
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            # Esto devuelve un QuerySet con todas las comidas seleccionadas
+            comidas_ids = request.POST.getlist('comida')
+            print("Comidas seleccionadas:", comidas_ids)
+            # Creamos un objeto base sin guardar
+            registro_base = form.save(commit=False)
 
-                return redirect('registro_app:registro_exitoso')
-            
-            else:
-                print("Formulario no válido:", form.errors)
-        except Exception as e:
-            print(f"Error al guardar el registro: {e}")
-            return redirect('registro_app:crear_registro')
+            for comida_id in comidas_ids:
+                comida = Comida.objects.get(id=comida_id)
+                registro = Registro(
+                    **{
+                        campo.name: getattr(registro_base, campo.name)
+                        for campo in Registro._meta.fields
+                        if campo.name not in ('id', 'comida')
+                    }
+                )
+                registro.comida = comida
+                registro.save()
+            return redirect('registro_app:registro_exitoso')
+        else:
+            print("Formulario no válido:", form.errors)
     else:
         form = RegistroForm()
     
     return render(request, 'registro/crear_registro.html', {'form': form})
+
+def registro_exitoso(request):
+    logout(request)  # elimina la sesión del usuario
+    return render(request, 'registro_exitoso.html')
 
     
 def reporte_mensual_view(request):

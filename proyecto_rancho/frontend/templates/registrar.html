@@ -1,5 +1,16 @@
 {% extends 'base.html' %}
 {% block title %}Registrar Consumo{% endblock %}
+
+
+{% block styles %}
+    <style>
+        .btn-check:checked + .btn {
+        background-color: var(--bs-primary);
+        border: 0;
+        }
+    </style>
+{% endblock %}
+    
         
 {% block content %}
 <div class="d-flex flex-column align-items-center">
@@ -21,14 +32,18 @@
             </div>
             <div>
                 <label for="casino">Casino</label>
-                <select class="form-control disabled" name="casino" id="casino">
+                <select class="form-control" id="casino" disabled>
                     <option value="{{ usuario.casino.id }}">{{ usuario.casino }}</option>
                 </select>
+                <input type="hidden" name="casino" value="{{ usuario.casino.id }}">
             </div>
-            <div>
+            <div class="gap-2 mt-2">
                 {% for comida in comidas %}
-                <label for="comida">{{ comida }}</label>
-                <input class="" type="checkbox"  name="comida" required readonly value="{{ comida.id }}">
+                    <input type="checkbox" class="btn-check" id="comida_{{ comida.id }}" 
+                        name="comida" value="{{ comida.id }}">
+                    <label class="btn btn-sm btn-secondary" for="comida_{{ comida.id }}">
+                        {{ comida }}
+                    </label>
                 {% endfor %}
             </div>
         </div>

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro Exitoso{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center">
+    <h2>Registro Exitoso</h2>
+    <p>Gracias por registrar tu consumo. Tu sesión ha sido cerrada por seguridad.</p>
+    <a href="{% url 'login' %}" class="btn btn-primary">Volver a la página de inicio de sesión</a>
+</div>
+{% endblock %}

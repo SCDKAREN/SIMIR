@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
     <title>
         {% block title %}Proyecto Rancho{% endblock %}
     </title>
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <style>
         @import url(https://fonts.googleapis.com/css?family=Expletus+Sans:600);
@@ -39,13 +41,13 @@ main{
 }
 .hero{
   width: 100%;
-  max-width: 1200px;
-  height: 500px;
+  
+  height: auto;
   text-align: center;
   margin: 0 auto;
   background: #392f28;
   position: relative; 
-  color: #392f28;
+  color: #fff;
 }
 
 .hero h1{
@@ -122,13 +124,13 @@ main{
 </head>
 <body>
     <main>
-        <div class="hero">
-            <h1>Batallón de Ingenieros de Montaña N° 5</h1>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-            <img src="https://novaneuquen.com/data/fotos2/bbx_49553746_gefwew.jpg" />
-            <div class="bar">
-            </div>
-        </div>
+      <div class="hero">
+          <h1>Batallón de Ingenieros de Montaña 5</h1>
+          <p>Fortaleza - Templanza - Justicia - Prudencia</p>
+          <img src="{% static 'img/hero.jpeg' %}" />
+          <div class="bar">
+          </div>
+      </div>
     </main>
     {% block content %}
     {% endblock %}
