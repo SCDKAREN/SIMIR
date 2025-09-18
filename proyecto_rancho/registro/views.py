@@ -21,12 +21,13 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("registro_app:registro")
+            if user.es_administrador:
+                return redirect("registro_app:reporte_mensual")
+            else:
+                return redirect("registro_app:registro")
         else:
             messages.error(request, "Usuario o contraseña incorrectos.")
     return render(request, "login.html")
-
-    return render(request, "login.html")  # tu template de login
 
 def logout_view(request):
     logout(request)  # elimina la sesión del usuario
