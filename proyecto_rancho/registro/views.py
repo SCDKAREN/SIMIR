@@ -7,6 +7,7 @@ from .models import Comida
 from django.db.models import Q, F
 from django.http import JsonResponse
 from .models import Registro, Casino
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def login_view(request):
@@ -34,6 +35,7 @@ def logout_view(request):
     messages.success(request, "Has cerrado sesión correctamente.")
     return redirect("login")  # cambia "login" por el nombre de tu url de login
 
+@login_required(login_url='login')  # redirige al login si no está autenticado
 def registrar(request):
     usuario = request.user
     comidas = Comida.objects.all()  
@@ -84,12 +86,16 @@ def crear_registro(request):
     
     return render(request, 'registro/crear_registro.html', {'form': form})
 
+@login_required(login_url='login')  # redirige al login si no está autenticado
 def registro_exitoso(request):
     logout(request)  # elimina la sesión del usuario
     return render(request, 'registro_exitoso.html')
 
-    
+@login_required(login_url='login')  # redirige al login si no está autenticado    
 def reporte_mensual_view(request):
+    usuario=request.user
+    if usuario.es_administrador == False:
+        return redirect('registro_app:registro')
     context = {
         'comidas': Comida.objects.all(),
         'casinos': Casino.objects.all(),
