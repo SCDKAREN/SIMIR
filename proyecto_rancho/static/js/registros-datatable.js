@@ -7,27 +7,28 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         dom: 'Bfrtip',  // Esto indica dónde van los botones
+        
         buttons: [
             {
                 extend: 'excelHtml5',
-                text: '📊 Descargar Excel',
+                text: '📊 Excel',
                 className: 'btn btn-success'
             },
             {
                 extend: 'pdfHtml5',
-                text: '📄 Descargar PDF',
+                text: '📄 PDF',
                 className: 'btn btn-danger'
             }
         ],
-
-    
         ajax: {
             url: url,  // Ruta a tu vista de servidor
+            data: function (d) {
+                d.comida = $('#filtroComida').val();
+                d.casino = $('#filtroCasino').val();
+            },
             dataSrc: 'data'       // nombre del campo que contiene la lista de alarmas
         },
         columns: [
-             
-                
             { 
                 data: 'fecha_hora',
                 render: function (data, type, row) {
@@ -49,7 +50,7 @@ $(document).ready(function () {
                 render:function(data,type,row){
                     return `<span class="badge bg-success">${data}</span> `
                 }
-             },
+            },
         ],
         language: {
             decimal:"",
@@ -69,11 +70,11 @@ $(document).ready(function () {
             infoFiltered:"(Filtrado de MAX total entradas)",
             infoPostFix:"",
             thousands:",",
+            searchPlaceholder: "Buscar",
             },
         deferRender: true,
         lengthChange: false,
         
-        buttons: ['copy', 'excel', 'pdf'],
     });
 
     
@@ -83,6 +84,9 @@ $(document).ready(function () {
     $('.dataTables_filter input').attr('placeholder', 'Buscar ...');
 
 
-
-
+    $('.dt-button').removeClass('dt-button');
+    // Detectar cambios en los filtros y recargar tabla
+    $('#filtroComida, #filtroCasino').on('change', function () {
+        dataTable.ajax.reload();
+    });
 });

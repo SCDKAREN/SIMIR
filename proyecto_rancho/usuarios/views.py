@@ -19,10 +19,10 @@ def crear_usuario(request):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Usuario creado exitosamente')
-                return redirect('usuario_app:crear_formulario')
+                return redirect('registro_app:login')
         except Exception as e:
             messages.error(request, f'Error al crear el usuario: {e}')
             return redirect('usuario_app:crear_formulario')
     else:
-        messages.success(request, 'Usuario creado exitosamente')
-        return redirect('usuario_app:crear_formulario')    
+        form = UsuarioForm()
+    return redirect('usuario_app:crear_formulario')

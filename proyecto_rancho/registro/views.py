@@ -6,7 +6,7 @@ from .forms import RegistroForm
 from .models import Comida
 from django.db.models import Q, F
 from django.http import JsonResponse
-from .models import Registro
+from .models import Registro, Casino
 # Create your views here.
 
 def login_view(request):
@@ -16,19 +16,15 @@ def login_view(request):
 
         user = authenticate(request, username=username, password=password)
 
-        if user is not None:
-            if user.is_active:
-                login(request, user)
+        print("Intentando login con:", username, password)
+        print("Resultado authenticate:", user)
 
-                # Redirección diferenciada
-                if user.is_staff:
-                    return redirect("registro_app:reporte_mensual")  # o donde quieras para staff
-                else:
-                    return redirect("registro_app:registro")  # usuarios comunes
-            else:
-                messages.error(request, "Tu cuenta está desactivada. Contacta al administrador.")
+        if user is not None:
+            login(request, user)
+            return redirect("registro_app:registro")
         else:
             messages.error(request, "Usuario o contraseña incorrectos.")
+    return render(request, "login.html")
 
     return render(request, "login.html")  # tu template de login
 
@@ -39,34 +35,47 @@ def logout_view(request):
 
 def registrar(request):
     usuario = request.user
-    comidas = Comida.objects.all()  # Asumiendo que tienes un objeto Comida con id=1
+    comidas = Comida.objects.all()  
     # if not usuario.is_authenticated:
     #     return redirect('login')
     form = RegistroForm(request.POST)
     return render(request,"registrar.html",{'form': form, 'usuario': usuario, 'comidas': comidas})
 
 def crear_registro(request):
+    fecha_hoy = datetime.date.today()
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
-            # Esto devuelve un QuerySet con todas las comidas seleccionadas
+            documento = form.cleaned_data['documento']
             comidas_ids = request.POST.getlist('comida')
             print("Comidas seleccionadas:", comidas_ids)
             # Creamos un objeto base sin guardar
             registro_base = form.save(commit=False)
+            
+            # Validación: ya existe registro para este documento en estas comidas hoy?
+            registros_existentes = Registro.objects.filter(
+                documento=documento,
+                fecha_hora__date=fecha_hoy,
+                comida_id__in=comidas_ids,
+            )
 
-            for comida_id in comidas_ids:
-                comida = Comida.objects.get(id=comida_id)
-                registro = Registro(
-                    **{
-                        campo.name: getattr(registro_base, campo.name)
-                        for campo in Registro._meta.fields
-                        if campo.name not in ('id', 'comida')
-                    }
-                )
-                registro.comida = comida
-                registro.save()
-            return redirect('registro_app:registro_exitoso')
+            if registros_existentes.exists():
+                # Ya está registrado para al menos una de esas comidas hoy
+                messages.error(request, "Ya te has anotado hoy en una de las comidas seleccionadas.")
+                return redirect('registro_app:registro')
+            else:
+                for comida_id in comidas_ids:
+                    comida = Comida.objects.get(id=comida_id)
+                    registro = Registro(
+                        **{
+                            campo.name: getattr(registro_base, campo.name)
+                            for campo in Registro._meta.fields
+                            if campo.name not in ('id', 'comida', 'fecha_hora')
+                        }
+                    )
+                    registro.comida = comida
+                    registro.save()
+                return redirect('registro_app:registro_exitoso')
         else:
             print("Formulario no válido:", form.errors)
     else:
@@ -81,8 +90,10 @@ def registro_exitoso(request):
     
 def reporte_mensual_view(request):
     context = {
-        
+        'comidas': Comida.objects.all(),
+        'casinos': Casino.objects.all(),
     }
+    
     return render(request,"reporte_mensual.html",{'data': context})
 
 def registro_datatable(request):
@@ -92,6 +103,9 @@ def registro_datatable(request):
     order_column_index = int(request.GET.get('order[0][column]', 0))
     order_direction = request.GET.get('order[0][dir]', 'asc')
     search_value = request.GET.get('search[value]', None)
+
+    filtro_comida = request.GET.get('comida')
+    filtro_casino = request.GET.get('casino')
 
     # Mapeo de índices a columnas del datatable
     column_mapping = {
@@ -123,9 +137,18 @@ def registro_datatable(request):
 
             conditions &= term_conditions
 
+    hoy = datetime.date.today()
 
-
-    filtered_data = Registro.objects.all()
+    filtered_data = Registro.objects.filter(
+        fecha_hora__date=hoy
+    ).filter(conditions)
+    
+      # Aplicamos filtros dinámicos
+    if filtro_comida:
+        filtered_data = filtered_data.filter(comida=filtro_comida)
+    if filtro_casino:
+        filtered_data = filtered_data.filter(casino=filtro_casino)
+    
     filtered_data = filtered_data.order_by(order_column)
     total_records = filtered_data.count()
 

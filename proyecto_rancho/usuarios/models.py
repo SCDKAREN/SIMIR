@@ -9,6 +9,6 @@ class Usuario(AbstractUser):
     dni = models.CharField(max_length=10, unique=True, null=True)
     
     es_administrador = models.BooleanField(default=False)
-
+        
     def _str_(self):
         return self.username

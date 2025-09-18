@@ -15,6 +15,12 @@
 {% block content %}
 <div class="d-flex flex-column align-items-center">
         <h2>Registrar Consumo</h2>
+        {% if messages %}
+            {% for message in messages %}
+            <div class="bg-danger text-white p-2 rounded">{{ message }}</div>
+            {% endfor %}
+      {% endif %}
+            
         <form method="post" action="{% url 'registro_app:crear' %}">
         {% csrf_token %}
         <div class="mb-3">
@@ -48,10 +54,13 @@
             </div>
         </div>
         <button class="btn btn-success" type="submit">Confirmar</button>
+        <a class="btn btn-danger" href="{% url 'registro_app:logout' %}">Cancelar</a>
+
     </form>
     <p><a href="{% url 'inicio' %}">Volver al inicio</a></p>
     </div>
-  <p style="color:green;">{{ mensaje }}</p>
+    
+
 {% endblock %}
 
 
