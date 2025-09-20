@@ -70,7 +70,7 @@ $(document).ready(function () {
             infoFiltered:"(Filtrado de MAX total entradas)",
             infoPostFix:"",
             thousands:",",
-            searchPlaceholder: "Buscar",
+            searchPlaceholder: "Buscar por documento",
             },
         deferRender: true,
         lengthChange: false,

@@ -134,7 +134,7 @@ def registro_datatable(request):
     conditions = Q()
     if search_value:
         fields = [
-            'documento', 'apellido', 'casino', 'comida'  # Cambio aquí para buscar por user_made
+            'documento', 
         ]
         search_terms = search_value.split()
         for term in search_terms:
@@ -150,7 +150,7 @@ def registro_datatable(request):
         fecha_hora__date=hoy
     ).filter(conditions)
     
-      # Aplicamos filtros dinámicos
+    # Aplicamos filtros dinámicos
     if filtro_comida:
         filtered_data = filtered_data.filter(comida=filtro_comida)
     if filtro_casino:
@@ -159,6 +159,7 @@ def registro_datatable(request):
     filtered_data = filtered_data.order_by(order_column)
     total_records = filtered_data.count()
 
+    # Paginación
     data = [
         item.to_json()
         for item in filtered_data[start: start + length]
