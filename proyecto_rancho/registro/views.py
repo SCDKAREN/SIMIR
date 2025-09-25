@@ -99,6 +99,7 @@ def reporte_mensual_view(request):
     context = {
         'comidas': Comida.objects.all(),
         'casinos': Casino.objects.all(),
+        'fecha_hoy': datetime.date.today().strftime('%d/%m/%Y'),
     }
     
     return render(request,"reporte_mensual.html",{'data': context})
@@ -113,6 +114,7 @@ def registro_datatable(request):
 
     filtro_comida = request.GET.get('comida')
     filtro_casino = request.GET.get('casino')
+    filtro_fecha  = request.GET.get('fecha')
 
     # Mapeo de índices a columnas del datatable
     column_mapping = {
@@ -155,6 +157,18 @@ def registro_datatable(request):
         filtered_data = filtered_data.filter(comida=filtro_comida)
     if filtro_casino:
         filtered_data = filtered_data.filter(casino=filtro_casino)
+    if filtro_fecha:
+        try:
+            fecha_obj = datetime.datetime.strptime(filtro_fecha, '%Y-%m-%d').date()
+            print("Filtro de fecha recibido:", filtro_fecha)
+            print("Tipo de filtro de fecha:", type(filtro_fecha))
+            print("Fecha convertida:", fecha_obj)
+            print("Fecha convertida:", type(fecha_obj))
+            print("Fecha Hoy:", hoy)
+            print("Fecha Hoy:", type(hoy))
+            filtered_data = filtered_data.filter(fecha_hora__date=fecha_obj)
+        except ValueError:
+            print("Formato de fecha inválido:", filtro_fecha)
     
     filtered_data = filtered_data.order_by(order_column)
     total_records = filtered_data.count()

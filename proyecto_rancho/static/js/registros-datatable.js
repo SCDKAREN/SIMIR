@@ -25,6 +25,7 @@ $(document).ready(function () {
             data: function (d) {
                 d.comida = $('#filtroComida').val();
                 d.casino = $('#filtroCasino').val();
+                d.fecha = $('#filtroFecha').val();
             },
             dataSrc: 'data'       // nombre del campo que contiene la lista de alarmas
         },
@@ -86,7 +87,7 @@ $(document).ready(function () {
 
     $('.dt-button').removeClass('dt-button');
     // Detectar cambios en los filtros y recargar tabla
-    $('#filtroComida, #filtroCasino').on('change', function () {
+    $('#filtroComida, #filtroCasino, #filtroFecha').on('change', function () {
         dataTable.ajax.reload();
     });
 });

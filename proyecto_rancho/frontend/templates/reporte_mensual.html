@@ -9,8 +9,12 @@
 {% endblock %}
 {% block content %}
   <div class="card bg-dark text-white">
-    <div class="card-header">
-      <h2>Registro de Comidas - Casino</h2>
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h2>Registro del {{data.fecha_hoy}}</h2>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#configModal">Configuración</button>
+        <a class="btn btn-danger" href="{% url 'registro_app:logout' %}">Cerrar Sesión</a>
+      </div>
     </div>
     <div class="card-body">
       <div>
@@ -31,6 +35,9 @@
             {% endfor %}
         </select>
     </div>
+    <div class="col-md-4">
+        <input type="date" id="filtroFecha" class="form-control">
+    </div>
 </div>
       </div>
   <table id="registroTable" data-url="{% url 'registro_app:datatable' %}">
@@ -50,6 +57,25 @@
   
     </div>
   </div>
+
+  <!-- MODAL DE CONFIGURACION -->
+  <div class="modal " tabindex="-1" id="configModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 {% block scripts %}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
