@@ -8,7 +8,7 @@
       {% csrf_token %}
       {% if messages %}
         {% for message in messages %}
-        <div class="bg-danger text-white p-2 rounded">{{ message }}</div>
+        <div class="bg-success text-white p-2 rounded">{{ message }}</div>
         {% endfor %}
       {% endif %}
       <label>Usuario:</label><br>

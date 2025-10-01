@@ -6,19 +6,33 @@ $(document).ready(function () {
     dataTable = $('#registroTable').DataTable({
         processing: true,
         serverSide: true,
-        // dom: 'Bfrtip',
-        // buttons: [
-        //     {
-        //         extend: 'excelHtml5',
-        //         text: '📊 Excel',
-        //         className: 'btn btn-success'
-        //     },
-        //     {
-        //         extend: 'pdfHtml5',
-        //         text: '📄 PDF',
-        //         className: 'btn btn-danger'
-        //     }
-        // ],
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                text: '📊 Excel',
+                className: 'btn btn-success',
+                action: function () {
+                    let params = $.param({
+                        comida: $('#filtroComida').val(),
+                        casino: $('#filtroCasino').val(),
+                        fecha: $('#filtroFecha').val()
+                    });
+                    window.location = '/export/excel/?' + params;
+                }
+            },
+            {
+                text: '📄 PDF',
+                className: 'btn btn-danger',
+                action: function () {
+                    let params = $.param({
+                        comida: $('#filtroComida').val(),
+                        casino: $('#filtroCasino').val(),
+                        fecha: $('#filtroFecha').val()
+                    });
+                    window.location = '/export/pdf/?' + params;
+                }
+            }
+        ],
         ajax: {
             url: url,  // Ruta a tu vista de servidor
             data: function (d) {
@@ -66,7 +80,7 @@ $(document).ready(function () {
             infoFiltered:"(Filtrado de MAX total entradas)",
             infoPostFix:"",
             thousands:",",
-            searchPlaceholder: "Buscar por documento",
+            searchPlaceholder: "Buscar documento",
             },
         deferRender: true,
         lengthChange: false,
@@ -78,7 +92,7 @@ $(document).ready(function () {
     $('.dataTables_filter input').addClass('form-control rounded bg-light border-light');
     $('.dataTables_filter input').attr('placeholder', 'Buscar ...');
 
-    // $('.dt-button').removeClass('dt-button');
+    $('.dt-button').removeClass('dt-button');
     
     // Detectar cambios en los filtros y recargar tabla
     $('#filtroComida, #filtroCasino, #filtroFecha').on('change', function () {

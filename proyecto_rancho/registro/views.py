@@ -1,11 +1,20 @@
 import datetime
+import openpyxl
+import re
+from openpyxl.utils import get_column_letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from urllib.parse import quote
+
 from .forms import RegistroForm
 from .models import Comida
 from django.db.models import Q, F
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .models import Registro, Casino
 from django.contrib.auth.decorators import login_required
 # Create your views here.
@@ -179,3 +188,144 @@ def registro_datatable(request):
         'recordsFiltered': total_records,
         'data': data
     })
+
+def export_excel(request):
+    comida = request.GET.get("comida")
+    casino = request.GET.get("casino")
+    fecha = request.GET.get("fecha")
+
+    registros = Registro.objects.all()
+
+    if comida:
+        registros = registros.filter(comida=comida)
+    if casino:
+        registros = registros.filter(casino=casino)
+    if fecha:
+        registros = registros.filter(fecha_hora__date=fecha)
+
+    # Crear workbook
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Registros"
+
+    # Encabezados
+    headers = ["Fecha", "Apellido", "Nombre", "Documento", "Casino", "Comida"]
+    ws.append(headers)
+
+    # Filas
+    for r in registros:
+        ws.append([
+            r.fecha_hora.strftime("%d/%m/%Y %H:%M"),
+            r.apellido,
+            r.nombre,
+            r.documento or "Sin DNI",
+            r.casino.nombre if r.casino else "",
+            r.comida.nombre if r.comida else "",
+        ])
+
+    # Ajustar ancho de columnas
+    for col in ws.columns:
+        max_length = 0
+        col_letter = get_column_letter(col[0].column)
+        for cell in col:
+            if cell.value:
+                max_length = max(max_length, len(str(cell.value)))
+        ws.column_dimensions[col_letter].width = max_length + 2
+
+    # Respuesta HTTP
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    disposition, _ = build_filename(comida, casino, fecha, ext="xlsx")
+    response["Content-Disposition"] = disposition
+    wb.save(response)
+    return response
+
+def export_pdf(request):
+    comida = request.GET.get("comida")
+    casino = request.GET.get("casino")
+    fecha = request.GET.get("fecha")
+
+    registros = Registro.objects.all()
+
+    if comida:
+        registros = registros.filter(comida=comida)
+    if casino:
+        registros = registros.filter(casino=casino)
+    if fecha:
+        registros = registros.filter(fecha_hora__date=fecha)
+
+    # Crear PDF
+    response = HttpResponse(content_type="application/pdf")
+    disposition, _ = build_filename(comida, casino, fecha, ext="pdf")
+    response["Content-Disposition"] = disposition
+
+    doc = SimpleDocTemplate(response, pagesize=A4)
+    styles = getSampleStyleSheet()
+    elementos = []
+
+    # Encabezado
+    elementos.append(Paragraph("Listado de Registros", styles["Title"]))
+
+    # Tabla
+    data = [["Fecha", "Apellido", "Nombre", "Documento", "Casino", "Comida"]]
+    for r in registros:
+        data.append([
+            r.fecha_hora.strftime("%d/%m/%Y %H:%M"),
+            r.apellido,
+            r.nombre,
+            r.documento or "Sin DNI",
+            r.casino,
+            r.comida,
+        ])
+
+    table = Table(data)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0,0), (-1,0), colors.grey),
+        ("TEXTCOLOR", (0,0), (-1,0), colors.whitesmoke),
+        ("ALIGN", (0,0), (-1,-1), "CENTER"),
+        ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
+        ("BOTTOMPADDING", (0,0), (-1,0), 10),
+        ("GRID", (0,0), (-1,-1), 1, colors.black),
+    ]))
+    elementos.append(table)
+
+    doc.build(elementos)
+    return response
+
+def sanitize_filename(text):
+    """Quita caracteres no válidos para nombres de archivo"""
+    if not text:
+        return ""
+    # reemplaza espacios por guiones bajos y elimina caracteres raros
+    return re.sub(r'[^A-Za-z0-9_\-]', '', text.replace(" ", "_"))
+
+def build_filename(comida=None, casino=None, fecha=None, default="Registro", ext="pdf"):
+    parts = []
+
+    if comida:
+        comida_text = Comida.objects.get(id=comida).nombre
+        parts.append(sanitize_filename(comida_text))
+    if casino:
+        casino_text = Casino.objects.get(id=casino).nombre
+        parts.append(sanitize_filename(casino_text))
+    if not parts:
+        parts.append(default)
+
+    if fecha:
+        try:
+            # Intentar parsear si viene como YYYY-MM-DD
+            dt = datetime.strptime(fecha, "%Y-%m-%d")
+            date_str = dt.strftime("%Y-%m-%d")
+        except Exception:
+            # Si no se puede, usar la cadena tal cual sanitizada
+            date_str = sanitize_filename(fecha)
+    else:
+        date_str = datetime.now().strftime("%Y-%m-%d")
+
+    parts.append(date_str)
+    filename = "-".join(parts) + "." + ext
+
+    # Cabecera compatible con UTF-8
+    content_disposition = f'attachment; filename="{filename}"; filename*=UTF-8\'\'{quote(filename)}'
+    return content_disposition, filename

@@ -17,7 +17,7 @@ Including another URLconf
 from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib import admin
-
+from registro import views
 
 urlpatterns = [
 
@@ -26,4 +26,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('registro/', include('registro.urls')),
     path('usuario/', include('usuarios.urls')),
+    path("export/excel/", views.export_excel, name="export_excel"),
+    path("export/pdf/", views.export_pdf, name="export_pdf"),
 ]
