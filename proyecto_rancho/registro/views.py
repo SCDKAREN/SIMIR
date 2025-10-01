@@ -100,6 +100,7 @@ def reporte_mensual_view(request):
         'comidas': Comida.objects.all(),
         'casinos': Casino.objects.all(),
         'fecha_hoy': datetime.date.today().strftime('%d/%m/%Y'),
+        'hero': True,
     }
     
     return render(request,"reporte_mensual.html",{'data': context})
@@ -146,11 +147,7 @@ def registro_datatable(request):
 
             conditions &= term_conditions
 
-    hoy = datetime.date.today()
-
-    filtered_data = Registro.objects.filter(
-        fecha_hora__date=hoy
-    ).filter(conditions)
+    filtered_data = Registro.objects.filter(conditions)
     
     # Aplicamos filtros dinámicos
     if filtro_comida:
@@ -160,16 +157,13 @@ def registro_datatable(request):
     if filtro_fecha:
         try:
             fecha_obj = datetime.datetime.strptime(filtro_fecha, '%Y-%m-%d').date()
-            print("Filtro de fecha recibido:", filtro_fecha)
-            print("Tipo de filtro de fecha:", type(filtro_fecha))
-            print("Fecha convertida:", fecha_obj)
-            print("Fecha convertida:", type(fecha_obj))
-            print("Fecha Hoy:", hoy)
-            print("Fecha Hoy:", type(hoy))
             filtered_data = filtered_data.filter(fecha_hora__date=fecha_obj)
         except ValueError:
             print("Formato de fecha inválido:", filtro_fecha)
-    
+    else:
+        hoy = datetime.date.today()
+        filtered_data = filtered_data.filter(fecha_hora__date=hoy)
+        
     filtered_data = filtered_data.order_by(order_column)
     total_records = filtered_data.count()
 

@@ -31,8 +31,8 @@
     100% {width: 100%; }
 }
 body{
-   background: #392f28;
-   color: #fff;
+   background: #213726;
+   color: #9da67a;
 }
 main{
   width: 100%;
@@ -41,17 +41,17 @@ main{
 }
 .hero{
   width: 100%;
-  
   height: auto;
   text-align: center;
   margin: 0 auto;
-  background: #392f28;
+  background: #1a3027;
   position: relative; 
   color: #fff;
 }
 
 .hero h1{
   font-size: 3.5em;
+  text-shadow: 2px 2px 5px #000;
   margin: auto;
   position: absolute; 
   top: 120px;
@@ -62,24 +62,31 @@ main{
 }
 .hero p{
   font-size: 1.5em;
+  text-shadow: 2px 2px 5px #000;
   margin: auto;
   position: absolute; 
   top: 220px;
   left: 0;
   right: 0;
   bottom: 0;
-   z-index: 1;
+  z-index: 1;
 }
 .hero img{
   width: 100%;
+  object-fit: cover;
 }
+
+#hero2{
+  width: 350px;
+}
+
 .bar{
   width: 100%;
   height: 200px;
-  background: -moz-linear-gradient(289deg, #c60a09 0%, #f23332 36%, #c60a09 100%);
-  background: -webkit-linear-gradient(289deg, #c60a09 0%, #f23332 36%, #c60a09 100%);
-  background: -ms-linear-gradient(289deg, #c60a09 0%, #f23332 36%, #c60a09 100%);
-  background: linear-gradient(161deg, #c60a09 0%, #f23332 36%, #c60a09 100%);
+  background: -moz-linear-gradient(289deg, #a3a36d 0%, #a4a46e 36%, #a3a36d 100%);
+  background: -webkit-linear-gradient(289deg, #a3a36d 0%, #a4a46e 36%, #a3a36d 100%);
+  background: -ms-linear-gradient(289deg, #a3a36d 0%, #a4a46e 36%, #a3a36d 100%);
+  background: linear-gradient(161deg, #a3a36d 0%, #a4a46e 36%, #a3a36d 100%);
   opacity: 0.3;
   position: absolute; 
   z-index: 0;
@@ -88,20 +95,26 @@ main{
   -ms-transform-origin: 100% 0%;
   -webkit-transform-origin: 100% 0%;
   transform-origin: 100% 0%;
-   -webkit-animation: roll-out 1.2s ease-out ;
+  -webkit-animation: roll-out 1.2s ease-out ;
   -moz-animation: roll-out 1.2s ease-out ;
-    animation: roll-out 1.2s ease-out ; 
+  animation: roll-out 1.2s ease-out ; 
 }
 .hero h1, .hero p{
   -webkit-animation: scale-in 1.3s ease-out;
   -moz-animation: scale-in 1.3s  ease-out;
-    animation: scale-in 1.3s ease-out; 
+  animation: scale-in 1.3s ease-out; 
 }
 
+footer{
+  width: 100%;
+  height: 100px;
+  color:#fff;
+  background-color: rgb(157, 166, 122, .2);
+}
 
-@media all and (max-width: 768px) {
+@media (max-width: 768px) {
   .hero{
-    height: 50vw;
+    height: 50vw; 
   }
   .bar{
     height: 26vw;
@@ -113,10 +126,13 @@ main{
   }
   .hero p{
     font-size: 3vw;
-    top: 27vw;
+    top: 30vw;
   }
- 
+  .hero img{
+    width: 50% !important;
+  }
 }
+
     </style>
     {% block styles %}
     
@@ -126,14 +142,28 @@ main{
     <main>
       <div class="hero">
           <h1>Batallón de Ingenieros de Montaña 5</h1>
-          <p>Fortaleza - Templanza - Justicia - Prudencia</p>
-          <img src="{% static 'img/hero.jpeg' %}" />
+          <p class="pt-md-3">Fortaleza - Templanza - Justicia - Prudencia</p>
+          
+          {% if data.hero %}
+            <img src="{% static 'img/hero.jpeg' %}" />
+          {% else %}
+            <img id="hero2" src="{% static 'img/hero2.png' %}"/>
+          {% endif %}
+            
           <div class="bar">
           </div>
       </div>
+      <div class="pt-4">
+        {% block content %}
+        {% endblock %}
+      </div>
+      
     </main>
-    {% block content %}
-    {% endblock %}
+    <footer class="mt-4">
+      <div class="d-flex justify-content-center align-items-end h-100">
+        <p class="text-center">Sistema Militar de Registros(Si.Mi.R) - Todos los derechos reservados</p>
+      </div>
+    </footer>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 {% block scripts %}

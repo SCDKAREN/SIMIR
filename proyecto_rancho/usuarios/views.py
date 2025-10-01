@@ -21,6 +21,7 @@ def crear_usuario(request):
                 messages.success(request, 'Usuario creado exitosamente')
                 return redirect('registro_app:login')
         except Exception as e:
+            print("Error al crear el usuario:", e)
             messages.error(request, f'Error al crear el usuario: {e}')
             return redirect('usuario_app:crear_formulario')
     else:
