@@ -152,3 +152,5 @@ TEMPLATES = [
     },
     
 ]
+
+COMIDAS = ["Desayuno", "Almuerzo", "Merienda", "Cena"]

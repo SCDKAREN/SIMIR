@@ -22,7 +22,7 @@ from registro import views
 urlpatterns = [
 
     #path("", TemplateView.as_view(template_name="index.html"),name="inicio"),
-    path("", TemplateView.as_view(template_name="login.html"), name="login"),
+    path("", views.login_view, name="login"),
     path('admin/', admin.site.urls),
     path('registro/', include('registro.urls')),
     path('usuario/', include('usuarios.urls')),

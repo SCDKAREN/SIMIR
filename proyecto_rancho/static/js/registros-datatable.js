@@ -55,11 +55,22 @@ $(document).ready(function () {
             { data: 'nombre' },            
             { data: 'documento' },
             { data: 'casino' },
-            { data: 'comida',
-                render:function(data,type,row){
-                    return `<span class="badge bg-success">${data}</span> `
+            { 
+                data: 'comida',
+                render: function(data, type, row) {
+                    const colores = {
+                        'desayuno': 'bg-warning text-dark',
+                        'almuerzo': 'bg-success',
+                        'merienda': 'bg-primary',
+                        'cena': 'bg-danger'
+                    };
+
+                    // si no existe en el mapa, usar color por defecto
+                    const clase = colores[data?.toLowerCase()] || 'bg-secondary';
+
+                    return `<span class="badge rounded-pill ${clase}">${data}</span>`;
                 }
-            },
+            }
         ],
         language: {
             decimal:"",

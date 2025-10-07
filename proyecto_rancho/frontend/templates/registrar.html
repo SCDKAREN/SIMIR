@@ -43,13 +43,15 @@
                 </select>
                 <input type="hidden" name="casino" value="{{ usuario.casino.id }}">
             </div>
-            <div class="gap-2 mt-2">
+            <div class="d-flex justify-content-center gap-2 mt-2">
                 {% for comida in comidas %}
-                    <input type="checkbox" class="btn-check" id="comida_{{ comida.id }}" 
+                    {% if comida.habilitado %}
+                        <input type="checkbox" class="btn-check" id="comida_{{ comida.id }}" 
                         name="comida" value="{{ comida.id }}">
-                    <label class="btn btn-sm btn-secondary" for="comida_{{ comida.id }}">
-                        {{ comida }}
-                    </label>
+                        <label class="btn btn-sm btn-secondary" for="comida_{{ comida.id }}">
+                            {{ comida }}
+                        </label>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>

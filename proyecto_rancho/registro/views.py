@@ -7,6 +7,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from urllib.parse import quote
@@ -16,10 +17,17 @@ from .models import Comida
 from django.db.models import Q, F
 from django.http import JsonResponse, HttpResponse
 from .models import Registro, Casino
-from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def login_view(request):
+    # Si el usuario ya está autenticado, redirigirlo directamente
+    print("Usuario en sesión:", request.user)
+    if request.user.is_authenticated:
+        if request.user.es_administrador:
+            return redirect("registro_app:reporte_mensual")
+        else:
+            return redirect("registro_app:registro")
+
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -37,6 +45,7 @@ def login_view(request):
                 return redirect("registro_app:registro")
         else:
             messages.error(request, "Usuario o contraseña incorrectos.")
+
     return render(request, "login.html")
 
 def logout_view(request):
@@ -113,6 +122,18 @@ def reporte_mensual_view(request):
     }
     
     return render(request,"reporte_mensual.html",{'data': context})
+
+def config_comidas(request):
+    # Habilita o deshbilita comidas disponibles para el registro segun su campo 'habilitado'
+    if request.method == 'POST':
+        comidas_ids = request.POST.getlist('comida')
+        print("Comidas seleccionadas para habilitar:", comidas_ids)
+        # Primero deshabilitamos todas
+        Comida.objects.update(habilitado=False)
+        # Luego habilitamos las seleccionadas
+        Comida.objects.filter(id__in=comidas_ids).update(habilitado=True)
+        messages.success(request, "Configuración de comidas actualizada.")
+        return redirect('registro_app:reporte_mensual')
 
 def registro_datatable(request):
     draw = request.GET.get('draw')
