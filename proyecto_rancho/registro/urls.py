@@ -10,5 +10,6 @@ urlpatterns = [
     path('crear/', crear_registro, name='crear'),
     path('reporte-mensual/', reporte_mensual_view, name='reporte_mensual'),
     path('configurar-comidas/', config_comidas, name='config_comidas'),
+    path('registro-no-habilitado/', registro_no_habilitado_view, name='registro_no_habilitado'),
     path('datatable/',registro_datatable,name='datatable')
 ]

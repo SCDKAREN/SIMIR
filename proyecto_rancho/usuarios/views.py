@@ -20,6 +20,12 @@ def crear_usuario(request):
                 form.save()
                 messages.success(request, 'Usuario creado exitosamente')
                 return redirect('registro_app:login')
+            else:
+                if 'username' in form.errors:
+                    messages.error(request, 'El nombre de usuario ya existe. Por favor, elija otro.')
+                if 'dni' in form.errors:
+                    messages.error(request, 'El documento ya se encuentra registrado. Por favor, verifique el número de documento.')
+                return redirect('usuario_app:crear_formulario')
         except Exception as e:
             print("Error al crear el usuario:", e)
             messages.error(request, f'Error al crear el usuario: {e}')

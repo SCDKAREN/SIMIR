@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Formulario no disponible{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center">
+    <h2>Formulario no disponible</h2>
+    <p>El formulario solo se encuentra disponible entre las 7 y 10 de la mañana.</p>
+    <a href="{% url 'registro_app:logout' %}" class="btn btn-primary">Cerrar sesión y volver al login</a>
+</div>
+{% endblock %}

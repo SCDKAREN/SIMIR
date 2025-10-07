@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Registrar Consumo{% endblock %}
 
 
@@ -21,7 +22,7 @@
             {% endfor %}
         {% endif %}
             
-        <form method="post" action="{% url 'registro_app:crear' %}">
+        <form id="registroForm" method="post" action="{% url 'registro_app:crear' %}">
         {% csrf_token %}
         <div class="mb-3">
             <div>
@@ -43,20 +44,24 @@
                 </select>
                 <input type="hidden" name="casino" value="{{ usuario.casino.id }}">
             </div>
-            <div class="d-flex justify-content-center gap-2 mt-2">
-                {% for comida in comidas %}
-                    {% if comida.habilitado %}
-                        <input type="checkbox" class="btn-check" id="comida_{{ comida.id }}" 
-                        name="comida" value="{{ comida.id }}">
-                        <label class="btn btn-sm btn-secondary" for="comida_{{ comida.id }}">
-                            {{ comida }}
-                        </label>
-                    {% endif %}
-                {% endfor %}
+            <div>
+                <label for="casino">Seleccione comidas</label>
+                <div class="d-flex justify-content-center gap-2 mt-2">
+                    {% for comida in comidas %}
+                        {% if comida.habilitado %}
+                            <input type="checkbox" class="btn-check" id="comida_{{ comida.id }}" 
+                            name="comida" value="{{ comida.id }}">
+                            <label class="btn btn-sm btn-secondary" for="comida_{{ comida.id }}">
+                                {{ comida }}
+                            </label>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <small id="smallComida" class="form-text text-danger"></small>
             </div>
         </div>
-        <div class="d-flex justify-content-between gap-2">
-            <button class="btn btn-success" type="submit">Confirmar</button>
+        <div class="d-flex justify-content-center gap-2">
+            <button id="registroSubmit" class="btn btn-success" type="submit">Confirmar</button>
             <a class="btn btn-danger" href="{% url 'registro_app:logout' %}">Cancelar</a>
         </div>
 
@@ -67,5 +72,6 @@
 
 {% endblock %}
 
-
-    
+{% block scripts %}
+    <script src="{% static 'js/validaciones.js' %}"></script>
+{% endblock %}

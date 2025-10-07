@@ -7,9 +7,15 @@
     <form method="post"action="{% url 'registro_app:login' %}">
       {% csrf_token %}
       {% if messages %}
-        {% for message in messages %}
-        <div class="bg-success text-white p-2 rounded">{{ message }}</div>
-        {% endfor %}
+          {% for message in messages %}
+              <div
+                  class="p-2 rounded text-white
+                  {% if message.tags == 'error' %} bg-danger
+                  {% elif message.tags == 'success' %} bg-success
+                  {% else %} bg-info {% endif %}">
+                  {{ message }}
+              </div>
+          {% endfor %}
       {% endif %}
       <label>Usuario:</label><br>
       <input name="username" class="form-control" required><br>
