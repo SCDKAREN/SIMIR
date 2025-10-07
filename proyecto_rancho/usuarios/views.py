@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.views.decorators.cache import never_cache
 
 from .forms import UsuarioForm
 from .models import Casino
 # Create your views here.
 
+@never_cache
 def crear_usuario_view(request):
     context = {
         'casinos':  Casino.objects.all(),
@@ -19,7 +21,7 @@ def crear_usuario(request):
             if form.is_valid():
                 form.save()
                 messages.success(request, 'Usuario creado exitosamente')
-                return redirect('registro_app:login')
+                return redirect('login')
             else:
                 if 'username' in form.errors:
                     messages.error(request, 'El nombre de usuario ya existe. Por favor, elija otro.')

@@ -8,6 +8,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from urllib.parse import quote
@@ -19,6 +20,7 @@ from django.http import JsonResponse, HttpResponse
 from .models import Registro, Casino
 # Create your views here.
 
+@never_cache
 def login_view(request):
     # Si el usuario ya está autenticado, redirigirlo directamente
     print("Usuario en sesión:", request.user)
@@ -50,6 +52,7 @@ def logout_view(request):
     messages.success(request, "Has cerrado sesión correctamente.")
     return redirect("login")  # cambia "login" por el nombre de tu url de login
 
+@never_cache
 @login_required(login_url='login')  # redirige al login si no está autenticado
 def registrar(request):
     usuario = request.user
