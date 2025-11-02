@@ -59,9 +59,9 @@ def registrar(request):
     comidas = Comida.objects.all()  
     if not usuario.is_authenticated:
         return redirect('login')
-    # Si son entre las 7 y 10 de la mañana redirigir a pagina de formulario no habilitado
+    # Si son entre las 6 y 10 de la mañana redirigir a pagina de formulario no habilitado
     hora_actual = datetime.datetime.now().time()
-    hora_inicio = datetime.time(7, 0)
+    hora_inicio = datetime.time(6, 0)
     hora_fin = datetime.time(10, 0)
 
     print('Hora actual:', hora_actual)
@@ -69,8 +69,8 @@ def registrar(request):
     print('Hora fin:', hora_fin)
 
     # Verificar si la hora actual está dentro del rango
-    # if not hora_inicio <= hora_actual <= hora_fin:
-    #     return redirect('registro_app:registro_no_habilitado')
+    if not hora_inicio <= hora_actual <= hora_fin:
+        return redirect('registro_app:registro_no_habilitado')
     form = RegistroForm(request.POST)
     return render(request,"registrar.html",{'form': form, 'usuario': usuario, 'comidas': comidas})
 
@@ -139,12 +139,10 @@ def config_comidas(request):
     # Habilita o deshbilita comidas disponibles para el registro segun su campo 'habilitado'
     if request.method == 'POST':
         comidas_ids = request.POST.getlist('comida')
-        print("Comidas seleccionadas para habilitar:", comidas_ids)
         # Primero deshabilitamos todas
         Comida.objects.update(habilitado=False)
         # Luego habilitamos las seleccionadas
         Comida.objects.filter(id__in=comidas_ids).update(habilitado=True)
-        messages.success(request, "Configuración de comidas actualizada.")
         return redirect('registro_app:reporte_mensual')
 
 def registro_no_habilitado_view(request):
