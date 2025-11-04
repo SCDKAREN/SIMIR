@@ -1,7 +1,7 @@
-{% extends 'base.html' %} {% load static %} {% block title %}Registro de
-comidas{% endblock %} {% block styles %}
-<!-- BOOTSRAP -->
-
+{% extends 'base.html' %}
+{% load static %} 
+{% block title %}Registro de comidas{% endblock %}
+{% block styles %}
 <!-- DATATABLE -->
 <link
     rel="stylesheet"
@@ -16,6 +16,16 @@ comidas{% endblock %} {% block styles %}
 />
 <!-- ESTILOS EXTRA -->
 <style>
+    .btn-check:checked + .btn {
+        background-color: var(--bs-primary);
+        color: #fff;
+    }
+
+    .btn-check:not(:checked) + .btn {
+        background-color: var(--bs-secondary);
+        color: #fff;
+    }
+    
     #registroTable {
         color: #9da67a;
         background-color: #1a3027;
@@ -99,7 +109,8 @@ comidas{% endblock %} {% block styles %}
         color: #d8d8d8 !important;
     }
 </style>
-{% endblock %} {% block content %}
+{% endblock %} 
+{% block content %}
 <div class="container">
     <div class="card">
         <div
@@ -109,11 +120,13 @@ comidas{% endblock %} {% block styles %}
                 <h2>Registro del {{data.fecha_hoy}}</h2>
                 <small class="text-center">
                     Comidas habilitadas: <br class="d-md-none" />
-                    {% for comida in data.comidas %} {% if comida.habilitado %}
-                    <span class="badge rounded-pill bg-info"
-                        >{{comida.nombre}}</span
-                    >
-                    {% endif %} {% endfor %}
+                    {% for comida in data.comidas %} 
+                        {% if comida.habilitado %}
+                        <span class="badge rounded-pill bg-info"
+                            >{{comida.nombre}}</span
+                        >
+                        {% endif %} 
+                    {% endfor %}
                 </small>
             </div>
             <div class="d-flex gap-2 justify-content-center">
@@ -196,50 +209,70 @@ comidas{% endblock %} {% block styles %}
                     aria-label="Close"
                 ></button>
             </div>
-            <form
-                action="{% url 'registro_app:config_comidas' %}"
-                method="post"
-            >
-                <div class="modal-body">
-                    <div>
-                        <h2>Habilitar comidas</h2>
-                        {% csrf_token %} {% for comida in data.comidas %}
-                        <div class="form-check">
-                            <input
-                                class="form-check-input"
-                                type="checkbox"
-                                value="{{comida.id}}"
-                                id="comida{{comida.id}}"
-                                name="comida"
-                                {% if comida.habilitado %}checked{% endif %}
-                            />
-                            <label
-                                class="form-check-label"
-                                for="comida{{comida.id}}"
-                            >
-                                {{comida.nombre}}
-                            </label>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
+            <div class="modal-body">
+                <div class="d-flex justify-content-center">
+                    <button id="btnActivar" data-url="{% url 'registro_app:activar_formulario' %}" data-activado="{{ data.form_activado }}"
+                        {% if data.form_activado == True %}
+                            class="btn btn-secondary" disabled
+                        {% elif data.form_activado == False %}
+                            class="btn btn-warning"
+                        {% else %}
+                            class="btn btn-success" disabled
+                        {% endif %}
                     >
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        Guardar cambios
+                        {% if data.form_activado == True %}
+                            El formulario está activo hasta las {{ data.hora }}
+                        {% elif data.form_activado == False %}
+                            Activar formulario temporalmente
+                        {% else %}
+                            El formulario está disponible ahora mismo
+                        {% endif %}
                     </button>
                 </div>
+                <form
+                    action="{% url 'registro_app:config_comidas' %}"
+                    method="post"
+                >
+                        <div>
+                            <h4>Habilitar comidas</h4>
+                            {% csrf_token %} 
+                            
+                            <div class="d-flex justify-content-center gap-2">
+                                {% for comida in data.comidas %}
+                                    <input type="checkbox" 
+                                        class="btn-check" 
+                                        id="comida_{{ comida.id }}" 
+                                        name="comida" 
+                                        value="{{ comida.id }}"
+                                        {% if comida.habilitado %} checked {% endif %}>
+                                    <label for="comida_{{ comida.id }}" 
+                                        class="btn btn-sm {% if comida.habilitado %}btn-primary{% else %}btn-secondary{% endif %}">
+                                        {{ comida }}
+                                    </label>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    Guardar cambios
+                </button>
+            </div>
             </form>
         </div>
     </div>
 </div>
-{% endblock %} {% block scripts %}
+{% endblock %} 
+{% block scripts %}
+<script src="{% static 'js/reactivar-formulario.js' %}"></script>
 <!-- DATATABLE -->
 <script src="//cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
 <script src="{% static 'js/registros-datatable.js' %}"></script>
