@@ -210,7 +210,22 @@
                 ></button>
             </div>
             <div class="modal-body">
-                <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-center mb-2">
+                    <button id="btnActivarCrearCuenta" data-url="{% url 'registro_app:activar_crear_usuario' %}" data-activado="{{ data.signup_form_activado }}"
+                        {% if data.signup_form_activado == True %}
+                            class="btn btn-success" disabled
+                        {% elif data.signup_form_activado == False %}
+                            class="btn btn-info"
+                        {% endif %}
+                    >
+                        {% if data.signup_form_activado == True %}
+                            La creación de cuentas está activa hasta las {{ data.hora_crear_usuario }}
+                        {% elif data.signup_form_activado == False %}
+                            Activar creación de cuentas temporalmente
+                        {% endif %}
+                    </button>
+                </div>
+                <div class="d-flex justify-content-center mb-2">
                     <button id="btnActivar" data-url="{% url 'registro_app:activar_formulario' %}" data-activado="{{ data.form_activado }}"
                         {% if data.form_activado == True %}
                             class="btn btn-secondary" disabled

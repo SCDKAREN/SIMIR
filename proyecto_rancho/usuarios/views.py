@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.views.decorators.cache import never_cache
+from django.utils import timezone
+from django.core.cache import cache
 
 from .forms import UsuarioForm
 from .models import Casino
@@ -15,7 +17,12 @@ def crear_usuario_view(request):
     return render(request,"crear_usuario.html",{'data': context})
 
 def crear_usuario(request):
-    if request.method == 'POST':
+    signup_activado_hasta = cache.get('signup_form_activado_hasta')
+    signup_activado = False
+    if signup_activado_hasta and timezone.now() < signup_activado_hasta:
+        signup_activado = True
+        
+    if request.method == 'POST' and signup_activado:
         try:
             form = UsuarioForm(request.POST)
             if form.is_valid():
@@ -33,5 +40,4 @@ def crear_usuario(request):
             messages.error(request, f'Error al crear el usuario: {e}')
             return redirect('usuario_app:crear_formulario')
     else:
-        form = UsuarioForm()
-    return redirect('usuario_app:crear_formulario')
+        return redirect('login')

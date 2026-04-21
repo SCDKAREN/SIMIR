@@ -76,6 +76,7 @@ def activar_formulario(request):
         return JsonResponse({'success': False, 'message': 'No autorizado'}, status=403)
 
     expiracion = datetime.datetime.now() + datetime.timedelta(minutes=30)
+    expiracion = timezone.make_aware(expiracion)
     
     # Guardamos en el cache global (clave accesible por todas las sesiones)
     cache.set('formulario_activado_hasta', expiracion, timeout=30*60)
@@ -84,6 +85,22 @@ def activar_formulario(request):
         'success': True,
         'expira': expiracion.strftime("%H:%M"),
         'message': 'Formulario habilitado globalmente por 30 minutos'
+    })
+
+def activar_crear_usuario(request):
+    if not request.user.is_authenticated or not request.user.es_administrador:
+        return JsonResponse({'success': False, 'message': 'No autorizado'}, status=403)
+
+    expiracion = datetime.datetime.now() + datetime.timedelta(minutes=120)
+    expiracion = timezone.make_aware(expiracion)
+    
+    # Guardamos en el cache global (clave accesible por todas las sesiones)
+    cache.set('signup_form_activado_hasta', expiracion, timeout=120*60)
+
+    return JsonResponse({
+        'success': True,
+        'expira': expiracion.strftime("%H:%M"),
+        'message': 'Formulario de creación de usuario habilitado globalmente por 120 minutos'
     })
 
 # region EXPORTAR EXCEL Y PDF

@@ -11,5 +11,6 @@ urlpatterns = [
     path('reporte-mensual/', reporte_mensual_view, name='reporte_mensual'),
     path('configurar-comidas/', config_comidas, name='config_comidas'),
     path('datatable/',registro_datatable,name='datatable'),
-    path('activar-formulario/', activar_formulario, name='activar_formulario')
+    path('activar-formulario/', activar_formulario, name='activar_formulario'),
+    path('activar-crear-usuario/', activar_crear_usuario, name='activar_crear_usuario')
 ]

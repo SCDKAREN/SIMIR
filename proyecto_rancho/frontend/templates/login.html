@@ -28,7 +28,13 @@
     <div class="text-center">
       <span class="text-center">________________ . ________________</span>
       <br>
-      <span>Para anotarte necesitas <a href="{% url 'usuario_app:crear_formulario' %}">crear una cuenta</a>.</span>
+      
+      {% if signup_activado %}
+        <span>Para anotarte necesitas <a href="{% url 'usuario_app:crear_formulario' %}">crear una cuenta</a>.</span>
+      {% else %}
+        <span>Actualmente la creación de cuentas está desactivada. Contacta a tu administrador para más información.</span>
+      {% endif %}
+
     </div>
   </div>
 

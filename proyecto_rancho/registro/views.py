@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.utils import timezone
 
 from .forms import RegistroForm
 from .models import Comida
@@ -16,6 +17,11 @@ from .models import Registro, Casino
 
 @never_cache
 def login_view(request):
+    signup_activado_hasta = cache.get('signup_form_activado_hasta')
+    signup_activado = False
+    if signup_activado_hasta and timezone.now() < signup_activado_hasta:
+        signup_activado = True
+    
     # Si el usuario ya está autenticado, redirigirlo directamente
     print("Usuario en sesión:", request.user)
     if request.user.is_authenticated:
@@ -39,8 +45,9 @@ def login_view(request):
         else:
             messages.error(request, "Usuario o contraseña incorrectos.")
 
-    return render(request, "login.html")
+    return render(request, "login.html", {'signup_activado': signup_activado})
 
+@login_required(login_url='login')
 def logout_view(request):
     logout(request)  # elimina la sesión del usuario
     messages.success(request, "Has cerrado sesión correctamente.")
@@ -53,15 +60,14 @@ def registrar(request):
     if not usuario.is_authenticated:
         return redirect('login')
     # Si son entre las 6 y 10 de la mañana redirigir a pagina de formulario no habilitado
-    hora_actual = datetime.datetime.now().time()
+    hora_actual = timezone.now().time()
     hora_inicio = datetime.time(6, 0)
     hora_fin = datetime.time(10, 0)
     context = {}
     form_activado_hasta = cache.get('formulario_activado_hasta')
     activo_globalmente = False
-    if form_activado_hasta and datetime.datetime.now() < form_activado_hasta:
+    if form_activado_hasta and timezone.now() < form_activado_hasta:
         activo_globalmente = True
-    print("Formulario activado hasta:", form_activado_hasta)
     # Verificar si la hora actual está dentro del rango
     if not (hora_inicio <= hora_actual <= hora_fin or activo_globalmente):
         context = {
@@ -83,7 +89,7 @@ def reporte_mensual_view(request):
     hora_inicio = datetime.time(7, 0)
     hora_fin = datetime.time(10, 0)
     form_activado_hasta = cache.get('formulario_activado_hasta')
-    print("Formulario activado hasta:", form_activado_hasta)
+    signup_form_activado_hasta = cache.get('signup_form_activado_hasta')
 
     if form_activado_hasta:
         form_activado = True
@@ -93,20 +99,36 @@ def reporte_mensual_view(request):
             form_activado = None
         else:
             form_activado = False
-    print('form_activado:', form_activado)
-    if usuario.es_administrador == False:
+    
+    if signup_form_activado_hasta:
+        signup_form_activado = True
+        hora_crear_usuario = signup_form_activado_hasta.strftime('%H:%M')
+    else:
+        if (hora_inicio <= hora_actual <= hora_fin):
+            signup_form_activado = None
+        else:
+            signup_form_activado = False
+    
+    
+    if not usuario.es_administrador:
         return redirect('registro_app:registro')
+    
     context = {
         'comidas': Comida.objects.all(),
         'casinos': Casino.objects.all(),
+        # amazonq-ignore-next-line
         'fecha_hoy': datetime.date.today().strftime('%d/%m/%Y'),
         'hero': True,
         'form_activado': form_activado,
-        'hora': hora if form_activado else None
+        'signup_form_activado': signup_form_activado,
+        'hora': hora if form_activado is True else None,
+        'hora_crear_usuario': hora_crear_usuario if signup_form_activado is True else None,
     }
     
     return render(request,"reporte_mensual.html",{'data': context})
 
+@login_required(login_url='login')
+# amazonq-ignore-next-line
 def registro_datatable(request):
     draw = request.GET.get('draw')
     start = int(request.GET.get('start', 0))
@@ -158,10 +180,10 @@ def registro_datatable(request):
         filtered_data = filtered_data.filter(casino=filtro_casino)
     if filtro_fecha:
         try:
-            fecha_obj = datetime.datetime.strptime(filtro_fecha, '%Y-%m-%d').date()
+            fecha_obj = datetime.date.fromisoformat(filtro_fecha)
             filtered_data = filtered_data.filter(fecha_hora__date=fecha_obj)
-        except ValueError:
-            print("Formato de fecha inválido:", filtro_fecha)
+        except Exception as e:
+            print(f"Error al convertir la fecha: {e}")
     else:
         hoy = datetime.date.today()
         filtered_data = filtered_data.filter(fecha_hora__date=hoy)
