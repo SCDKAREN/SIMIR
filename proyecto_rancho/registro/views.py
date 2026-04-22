@@ -61,8 +61,8 @@ def registrar(request):
         return redirect('login')
     # Si son entre las 6 y 10 de la mañana redirigir a pagina de formulario no habilitado
     hora_actual = timezone.now().time()
-    hora_inicio = datetime.time(6, 0)
-    hora_fin = datetime.time(10, 0)
+    hora_inicio = datetime.time(0, 0)
+    hora_fin = datetime.time(23, 59)
     context = {}
     form_activado_hasta = cache.get('formulario_activado_hasta')
     activo_globalmente = False
