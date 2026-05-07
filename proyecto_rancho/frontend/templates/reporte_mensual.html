@@ -214,13 +214,13 @@
                     <button id="btnActivarCrearCuenta" data-url="{% url 'registro_app:activar_crear_usuario' %}" data-activado="{{ data.signup_form_activado }}"
                         {% if data.signup_form_activado == True %}
                             class="btn btn-success" disabled
-                        {% elif data.signup_form_activado == False %}
+                        {% elif data.signup_form_activado == False or data.signup_form_activado == None %}
                             class="btn btn-info"
                         {% endif %}
                     >
                         {% if data.signup_form_activado == True %}
                             La creación de cuentas está activa hasta las {{ data.hora_crear_usuario }}
-                        {% elif data.signup_form_activado == False %}
+                        {% elif data.signup_form_activado == False or data.signup_form_activado == None %}
                             Activar creación de cuentas temporalmente
                         {% endif %}
                     </button>
